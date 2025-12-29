@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/mn-kitchen/static/css/main.e6c13ad2.css",
+    "main.js": "/mn-kitchen/static/js/main.fd4fa146.js",
+    "index.html": "/mn-kitchen/index.html",
+    "main.e6c13ad2.css.map": "/mn-kitchen/static/css/main.e6c13ad2.css.map",
+    "main.fd4fa146.js.map": "/mn-kitchen/static/js/main.fd4fa146.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.fd4fa146.js"
+  ]
+}

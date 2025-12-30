@@ -113,6 +113,15 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
     }
   `}
 
+  ${({ $isIPhone }) => $isIPhone && `
+    scroll-snap-type: none;
+    scroll-snap-stop: normal;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: auto;
+    -webkit-overflow-scrolling: touch;
+    cursor: default;
+  `}
+
   &:active {
     cursor: grabbing;
     scroll-behavior: auto;
@@ -401,7 +410,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
 
   // Touch support for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (isIPhone) return; // native scroll
+    if (isIPhone) return; // native scroll, no custom drag
     setIsUserInteracting(true);
     if (containerRef.current) {
       setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);

@@ -106,14 +106,15 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
   `}
 
   ${({ $isIPhone }) => $isIPhone && `
+    /* iPhone: use native scrolling with no snapping */
     scroll-snap-type: none;
     scroll-snap-stop: normal;
-    touch-action: pan-x pan-y;
+    touch-action: auto;
     overscroll-behavior: auto;
-    -webkit-overflow-scrolling: touch;
-    cursor: default;
     scroll-behavior: auto;
     overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    cursor: default;
     scrollbar-width: none;
     -ms-overflow-style: none;
 

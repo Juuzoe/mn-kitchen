@@ -24,12 +24,14 @@
 
 <p align="center">
   <a href="https://juuzoe.github.io/mn-kitchen/">
-    <img alt="App preview" src="docs/demo.gif" width="880" />
+    <img alt="Menu page" src="docs/preview-menu.png" width="880" />
   </a>
 </p>
 
 <p align="center">
-If you do not have a demo recording yet, add one at <code>docs/demo.gif</code> and it will show up here.
+  <a href="https://juuzoe.github.io/mn-kitchen/">
+    <img alt="Basket page" src="docs/preview-basket.png" width="880" />
+  </a>
 </p>
 
 ## What this is

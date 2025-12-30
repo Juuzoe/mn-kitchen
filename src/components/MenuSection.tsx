@@ -117,9 +117,17 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
     scroll-snap-type: none;
     scroll-snap-stop: normal;
     touch-action: pan-x pan-y;
-    overscroll-behavior-x: auto;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     cursor: default;
+    scroll-behavior: auto;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   `}
 
   &:active {

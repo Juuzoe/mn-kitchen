@@ -101,6 +101,18 @@ const MenuContainer = styled.div<{ $isMobile: boolean }>`
   }
   `}
 
+  ${({ $isMobile }) => $isMobile && `
+    cursor: default;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+
+    & > * {
+      scroll-snap-align: start;
+    }
+  `}
+
   &:active {
     cursor: grabbing;
     scroll-behavior: auto;
@@ -108,8 +120,8 @@ const MenuContainer = styled.div<{ $isMobile: boolean }>`
   
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     ${({ $isMobile, theme }) => $isMobile && `
-      padding: ${theme.spacing.sm} 0;
-      gap: ${theme.spacing.sm};
+      padding: ${theme.spacing.sm} 0 ${theme.spacing.md};
+      gap: ${theme.spacing.xs};
     `}
   }
 `;
@@ -129,7 +141,7 @@ const MenuItem = styled(motion.div)<{ $isMobile: boolean; $expanded: boolean }>`
   margin-right: ${({ theme }) => theme.spacing.md};
   transition: all 0.3s ease;
 
-  ${({ $expanded }) => !$expanded && `
+  ${({ $expanded, $isMobile }) => !$expanded && !$isMobile && `
     &:hover {
       transform: scale(1.01);
       z-index: 1;
@@ -147,9 +159,9 @@ const MenuItem = styled(motion.div)<{ $isMobile: boolean; $expanded: boolean }>`
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     ${({ $isMobile, $expanded, theme }) => $isMobile && `
       min-width: 250px;
-      min-height: ${$expanded ? '380px' : '280px'};
-      padding: ${theme.spacing.sm};
-      margin-right: ${theme.spacing.sm};
+      min-height: ${$expanded ? '360px' : '260px'};
+      padding: ${theme.spacing.sm} ${theme.spacing.sm};
+      margin-right: ${theme.spacing.xs};
       
       &:active {
         transform: scale(0.98);
@@ -354,6 +366,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   const autoScrollRef = React.useRef<number | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (isIPhone) return;
     setIsDragging(true);
     setIsUserInteracting(true);
     setStartX(e.pageX - (containerRef.current?.offsetLeft || 0));
@@ -363,23 +376,26 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (isIPhone || !isDragging || !containerRef.current) return;
     if (!isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - (containerRef.current.offsetLeft || 0);
-    const walk = (x - startX) * 1.5; // Reduced sensitivity for smoother dragging
+    const walk = (x - startX) * 1.2; // Further reduced sensitivity for smoother dragging
       containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleMouseUp = () => {
+    if (isIPhone) return;
     setIsDragging(false);
     // Resume auto-scroll after a delay
     setTimeout(() => {
       setIsUserInteracting(false);
-    }, 2000);
+    }, 3000);
   };
 
   // Touch support for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (isIPhone) return; // native scroll
     setIsUserInteracting(true);
     if (containerRef.current) {
       setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
@@ -388,16 +404,18 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (isIPhone || !containerRef.current) return;
     if (!containerRef.current) return;
     const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
+    const walk = (x - startX) * 1.2;
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleTouchEnd = () => {
+    if (isIPhone) return;
     setTimeout(() => {
       setIsUserInteracting(false);
-    }, 2000);
+    }, 3000);
   };
 
   // Improved auto-scroll with smooth animation

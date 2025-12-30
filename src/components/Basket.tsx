@@ -240,6 +240,9 @@ const Basket: React.FC = () => {
   const [showOrderModal, setShowOrderModal] = React.useState(false);
   const [orderComment, setOrderComment] = React.useState('');
 
+  const resolveSrc = (src?: string) =>
+    src && src.startsWith('http') ? src : `${process.env.PUBLIC_URL || ''}${src || ''}`;
+
   const handleBackClick = () => {
     window.history.back();
   };
@@ -335,7 +338,7 @@ const Basket: React.FC = () => {
                 >
                   <FaTrashIcon size={16} />
                 </RemoveButton>
-                <ItemImage src={image} alt={name} />
+                <ItemImage src={resolveSrc(image)} alt={name} />
                 <ItemName>{name}</ItemName>
                 <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
                   <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '4px' }}>

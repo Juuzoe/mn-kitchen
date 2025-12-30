@@ -349,6 +349,8 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   const [optionsItem, setOptionsItem] = React.useState<MenuItemType | null>(null);
   const [selectedOptions, setSelectedOptions] = React.useState<string[]>([]);
   const [showOptions, setShowOptions] = React.useState(false);
+  const resolveSrc = (src: string) =>
+    src?.startsWith('http') ? src : `${process.env.PUBLIC_URL || ''}${src}`;
   const autoScrollRef = React.useRef<number | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -591,7 +593,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
                 onMouseLeave={() => setIsHovering(false)}
                 onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
           >
-            <ItemImage src={item.image} alt={item.name} />
+            <ItemImage src={resolveSrc(item.image)} alt={item.name} />
             <ItemTitle>{item.name}</ItemTitle>
             <ItemDescription $expanded={expandedId === item.id}>{item.description}</ItemDescription>
             {expandedId === item.id && (() => {

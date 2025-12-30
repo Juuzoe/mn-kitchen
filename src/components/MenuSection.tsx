@@ -55,7 +55,7 @@ const SectionTitle = styled(motion.h2)`
 `;
 
 // Desktop version - keep original scrollbar styling
-const MenuContainer = styled.div<{ $isMobile: boolean }>`
+const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -124,6 +124,13 @@ const MenuContainer = styled.div<{ $isMobile: boolean }>`
       gap: ${theme.spacing.xs};
     `}
   }
+
+  ${({ $isIPhone }) => $isIPhone && `
+    scroll-snap-type: none;
+    scroll-snap-stop: normal;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+  `}
 `;
 
 const MenuItem = styled(motion.div)<{ $isMobile: boolean; $expanded: boolean }>`
@@ -377,11 +384,10 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isIPhone || !isDragging || !containerRef.current) return;
-    if (!isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - (containerRef.current.offsetLeft || 0);
-    const walk = (x - startX) * 1.2; // Further reduced sensitivity for smoother dragging
-      containerRef.current.scrollLeft = scrollLeft - walk;
+    const walk = (x - startX) * 1.1; // Slightly gentler drag
+    containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleMouseUp = () => {
@@ -405,9 +411,8 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (isIPhone || !containerRef.current) return;
-    if (!containerRef.current) return;
     const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.2;
+    const walk = (x - startX) * 1.1;
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -591,6 +596,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
       <MenuContainer
         ref={containerRef}
         $isMobile={isMobile || isIPhone}
+        $isIPhone={isIPhone}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/mn-kitchen/static/css/main.e6c13ad2.css",
-    "main.js": "/mn-kitchen/static/js/main.011102ee.js",
+    "main.js": "/mn-kitchen/static/js/main.ca77d862.js",
     "index.html": "/mn-kitchen/index.html",
     "main.e6c13ad2.css.map": "/mn-kitchen/static/css/main.e6c13ad2.css.map",
-    "main.011102ee.js.map": "/mn-kitchen/static/js/main.011102ee.js.map"
+    "main.ca77d862.js.map": "/mn-kitchen/static/js/main.ca77d862.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.011102ee.js"
+    "static/js/main.ca77d862.js"
   ]
 }

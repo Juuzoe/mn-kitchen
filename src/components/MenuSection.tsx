@@ -89,27 +89,19 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
 
   /* Mobile-specific styles */
   ${({ $isMobile }) => $isMobile && `
+    /* rely on native scrolling; no snapping on mobile */
     -webkit-overflow-scrolling: touch;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
+    touch-action: pan-x pan-y;
+    overscroll-behavior: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    
+    cursor: default;
+    scroll-snap-type: none;
+    scroll-snap-stop: normal;
+    scroll-behavior: auto;
+
     &::-webkit-scrollbar {
       display: none;
-  }
-  `}
-
-  ${({ $isMobile }) => $isMobile && `
-    cursor: default;
-    touch-action: pan-x;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-snap-stop: always;
-
-    & > * {
-      scroll-snap-align: start;
     }
   `}
 
@@ -117,7 +109,7 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
     scroll-snap-type: none;
     scroll-snap-stop: normal;
     touch-action: pan-x pan-y;
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
     cursor: default;
     scroll-behavior: auto;
@@ -390,7 +382,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   const autoScrollRef = React.useRef<number | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isIPhone) return;
+    if (isIPhone || isMobile) return;
     setIsDragging(true);
     setIsUserInteracting(true);
     setStartX(e.pageX - (containerRef.current?.offsetLeft || 0));
@@ -400,7 +392,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (isIPhone || !isDragging || !containerRef.current) return;
+    if (isIPhone || isMobile || !isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - (containerRef.current.offsetLeft || 0);
     const walk = (x - startX) * 1.1; // Slightly gentler drag
@@ -408,7 +400,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   };
 
   const handleMouseUp = () => {
-    if (isIPhone) return;
+    if (isIPhone || isMobile) return;
     setIsDragging(false);
     // Resume auto-scroll after a delay
     setTimeout(() => {
@@ -416,9 +408,9 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
     }, 3000);
   };
 
-  // Touch support for mobile
+  // Touch support for mobile (but let iPhone/native scrolling handle it)
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (isIPhone) return; // native scroll, no custom drag
+    if (isIPhone) return;
     setIsUserInteracting(true);
     if (containerRef.current) {
       setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);

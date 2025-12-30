@@ -275,6 +275,55 @@ const BasketButton = styled(motion.button)<{ $isMobile: boolean }>`
   }
 `;
 
+const DevPanel = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  background: ${({ theme }) => theme.colors.background.light};
+  border-radius: 14px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+  padding: 14px;
+  z-index: 1200;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+`;
+
+const DevHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+`;
+
+const DevToggle = styled.button`
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.9rem;
+`;
+
+const DevField = styled.input`
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+`;
+
+const DevText = styled.textarea`
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  resize: vertical;
+`;
+
 const OptionsOverlay = styled.div`
   position: fixed;
   inset: 0;
@@ -349,6 +398,20 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   const [optionsItem, setOptionsItem] = React.useState<MenuItemType | null>(null);
   const [selectedOptions, setSelectedOptions] = React.useState<string[]>([]);
   const [showOptions, setShowOptions] = React.useState(false);
+  const [devItems, setDevItems] = React.useState<MenuItemType[]>([]);
+  const [devFormOpen, setDevFormOpen] = React.useState(false);
+  const [devForm, setDevForm] = React.useState({
+    title: '',
+    description: '',
+    price: '9.99',
+    image: '',
+    calories: '300',
+    protein: '10',
+    carbs: '30',
+    fat: '10',
+    options: '',
+  });
+  const isDev = process.env.NODE_ENV !== 'production';
   const resolveSrc = (src: string) =>
     src?.startsWith('http') ? src : `${process.env.PUBLIC_URL || ''}${src}`;
   const autoScrollRef = React.useRef<number | null>(null);
@@ -462,7 +525,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
   };
 
   const handleAddToBasket = (item: MenuItemData) => {
-    const foundItem = allMenuItems.find(mi => mi.id === item.id);
+    const foundItem = allCombinedMenuItems.find(mi => mi.id === item.id);
     const needsOptions = foundItem?.options && foundItem.options.length > 0;
 
     if (needsOptions && foundItem) {
@@ -506,7 +569,12 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
     setShowOptions(false);
   };
 
-  const menuItems: MenuItemData[] = React.useMemo(() => {
+  const allCombinedMenuItems = React.useMemo(
+    () => [...allMenuItems, ...devItems],
+    [devItems]
+  );
+
+  const baseMenuItems: MenuItemData[] = React.useMemo(() => {
     switch (mealType) {
       case 'breakfast':
         return [
@@ -561,6 +629,26 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
     }
   }, [mealType]);
 
+  const devMenuData: MenuItemData[] = React.useMemo(
+    () =>
+      devItems
+        .filter((item) => item.category === mealType)
+        .map((item) => ({
+          id: item.id,
+          name: item.title,
+          description: item.description || '',
+          price: parseFloat((item as any).price || '9.99') || 9.99,
+          image: item.image,
+          options: item.options,
+        })),
+    [devItems, mealType]
+  );
+
+  const menuItems: MenuItemData[] = React.useMemo(
+    () => [...baseMenuItems, ...devMenuData],
+    [baseMenuItems, devMenuData]
+  );
+
   return (
     <SectionContainer position={position} $isMobile={isMobile || isIPhone}>
       <SectionTitle
@@ -597,7 +685,7 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
             <ItemTitle>{item.name}</ItemTitle>
             <ItemDescription $expanded={expandedId === item.id}>{item.description}</ItemDescription>
             {expandedId === item.id && (() => {
-              const fullItem = allMenuItems.find(mi => mi.id === item.id);
+              const fullItem = allCombinedMenuItems.find(mi => mi.id === item.id);
               return (
                 <div
                   style={{
@@ -648,6 +736,117 @@ const MenuSection: React.FC<MenuSectionProps> = ({ mealType, position }) => {
       >
         <FaShoppingBasketIcon size={24} />
       </BasketButton>
+
+      {isDev && (
+        <DevPanel>
+          <DevHeader>
+            <strong>Dev: Add Menu Item</strong>
+            <DevToggle onClick={() => setDevFormOpen(!devFormOpen)}>
+              {devFormOpen ? 'Hide' : 'Show'}
+            </DevToggle>
+          </DevHeader>
+          {devFormOpen && (
+            <div>
+              <DevField
+                placeholder="Title"
+                value={devForm.title}
+                onChange={(e) => setDevForm({ ...devForm, title: e.target.value })}
+              />
+              <DevText
+                rows={2}
+                placeholder="Description"
+                value={devForm.description}
+                onChange={(e) => setDevForm({ ...devForm, description: e.target.value })}
+              />
+              <DevField
+                placeholder="Image path (e.g. /images/lunch/new.webp)"
+                value={devForm.image}
+                onChange={(e) => setDevForm({ ...devForm, image: e.target.value })}
+              />
+              <DevField
+                placeholder="Price"
+                value={devForm.price}
+                onChange={(e) => setDevForm({ ...devForm, price: e.target.value })}
+              />
+              <DevField
+                placeholder="Calories"
+                value={devForm.calories}
+                onChange={(e) => setDevForm({ ...devForm, calories: e.target.value })}
+              />
+              <DevField
+                placeholder="Protein"
+                value={devForm.protein}
+                onChange={(e) => setDevForm({ ...devForm, protein: e.target.value })}
+              />
+              <DevField
+                placeholder="Carbs"
+                value={devForm.carbs}
+                onChange={(e) => setDevForm({ ...devForm, carbs: e.target.value })}
+              />
+              <DevField
+                placeholder="Fat"
+                value={devForm.fat}
+                onChange={(e) => setDevForm({ ...devForm, fat: e.target.value })}
+              />
+              <DevField
+                placeholder="Options (comma separated, optional)"
+                value={devForm.options}
+                onChange={(e) => setDevForm({ ...devForm, options: e.target.value })}
+              />
+              <DevToggle
+                onClick={() => {
+                  const newId = Date.now();
+                  const nutrition = {
+                    calories: Number(devForm.calories) || 0,
+                    protein: Number(devForm.protein) || undefined,
+                    carbs: Number(devForm.carbs) || undefined,
+                    fat: Number(devForm.fat) || undefined,
+                  };
+                  const optionsArr = devForm.options
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+                  const newItem: MenuItemType = {
+                    id: newId,
+                    title: devForm.title || 'Dev Item',
+                    description: devForm.description || '',
+                    calories: nutrition.calories || 0,
+                    image: devForm.image || '/images/placeholder.webp',
+                    recipeUrl: '#',
+                    category: mealType,
+                    nutrition,
+                    options: optionsArr.length ? optionsArr : undefined,
+                  } as MenuItemType & { price?: number };
+                  (newItem as any).price = parseFloat(devForm.price) || 9.99;
+                  setDevItems((prev) => [...prev, newItem]);
+                  console.log(
+                    'Paste into menuItems.ts:',
+                    JSON.stringify(
+                      {
+                        id: newId,
+                        title: newItem.title,
+                        description: newItem.description,
+                        calories: newItem.calories,
+                        image: newItem.image,
+                        recipeUrl: '#',
+                        category: mealType,
+                        nutrition,
+                        options: newItem.options,
+                      },
+                      null,
+                      2
+                    )
+                  );
+                  showToast('Dev item added locally (not persisted)', 'success');
+                  setDevFormOpen(false);
+                }}
+              >
+                Add (dev)
+              </DevToggle>
+            </div>
+          )}
+        </DevPanel>
+      )}
       {showOptions && optionsItem && (
         <OptionsOverlay onClick={closeOptions}>
           <OptionsCard

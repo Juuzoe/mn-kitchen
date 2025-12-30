@@ -47,10 +47,6 @@ const Links = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
   align-items: center;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    gap: ${({ theme }) => theme.spacing.sm};
-  }
 `;
 
 const IconLink = styled.a`
@@ -63,8 +59,6 @@ const IconLink = styled.a`
   background: rgba(255, 255, 255, 0.06);
   color: ${({ theme }) => theme.colors.text.secondary};
   transition: all 0.2s ease;
-  min-height: 44px;
-  min-width: 44px;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary};
@@ -84,8 +78,6 @@ const TextLink = styled.button`
   color: ${({ theme }) => theme.colors.text.secondary};
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 44px;
-  min-width: 44px;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary};
@@ -115,7 +107,7 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer"
             aria-label="GitHub"
           >
-            <FaGithubIcon size={20} />
+            <FaGithubIcon size={18} />
           </IconLink>
           <IconLink
             href="https://www.linkedin.com/in/maksym-gavrylenko/"
@@ -123,10 +115,10 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer"
             aria-label="LinkedIn"
           >
-            <FaLinkedinIcon size={20} />
+            <FaLinkedinIcon size={18} />
           </IconLink>
           <TextLink onClick={() => navigate('/about')}>
-            <FaInfoIcon size={18} />
+            <FaInfoIcon size={16} />
             About
           </TextLink>
         </Links>

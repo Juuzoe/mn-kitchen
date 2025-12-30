@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { motion } from 'framer-motion';
 import GlobalStyle from './styles/GlobalStyle';
@@ -21,7 +21,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ThemeProvider theme={theme}>
         <BasketProvider>
           <ToastProvider>
@@ -52,7 +52,7 @@ const App: React.FC = () => {
           </ToastProvider>
         </BasketProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 

@@ -106,25 +106,22 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
   `}
 
   ${({ $isIPhone }) => $isIPhone && `
-    /* iPhone: use native scrolling with no snapping */
+    /* iPhone: keep it minimal, native horizontal scroll */
     scroll-snap-type: none;
     scroll-snap-stop: normal;
-    touch-action: auto;
+    touch-action: pan-x;
     overscroll-behavior: auto;
     scroll-behavior: auto;
-    overflow-x: scroll;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     cursor: default;
     scrollbar-width: none;
     -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
   `}
 
   &:active {
-    cursor: grabbing;
+    cursor: grab;
     scroll-behavior: auto;
   }
   
@@ -144,6 +141,7 @@ const MenuContainer = styled.div<{ $isMobile: boolean; $isIPhone: boolean }>`
 `;
 
 const MenuItem = styled(motion.div)<{ $isMobile: boolean; $expanded: boolean }>`
+  flex: 0 0 auto;
   min-width: 300px;
   min-height: ${({ $expanded }) => ($expanded ? '440px' : '320px')};
   background-color: ${({ theme }) => theme.colors.background.light};
